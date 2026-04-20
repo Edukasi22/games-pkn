@@ -1,6 +1,12 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let aiInstance: any = null;
+const getAI = () => {
+  if (!aiInstance) {
+    aiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+  return aiInstance;
+};
 
 export interface GeneratedQuestion {
   question: string;
@@ -39,6 +45,7 @@ const IMAGE_RESOURCES = [
 ];
 
 export async function generateGameQuestions(): Promise<GeneratedRound[]> {
+  const ai = getAI();
   const prompt = `Generate a set of 3 rounds for a game show trivia called "Tebak Suku Nusantara" for 5th grade students.
   Each round must have 5 questions.
   
