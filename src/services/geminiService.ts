@@ -23,14 +23,14 @@ export interface GeneratedRound {
 
 // Map of topics to validated high-quality Wikimedia images for the AI to choose from
 const IMAGE_RESOURCES = [
-  { topic: 'Batik', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Pekalongan_Batik_02.jpg/600px-Pekalongan_Batik_02.jpg' },
-  { topic: 'Baju Bodo', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Buginese_Woman_in_traditional_clothe.jpg/600px-Buginese_Woman_in_traditional_clothe.jpg' },
-  { topic: 'Ulos', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/COLLECTIE_TROPENMUSEUM_Studioportret_van_een_Batak_bruid_en_bruidegom_SumatraTMnr_60024921.jpg/600px-COLLECTIE_TROPENMUSEUM_Studioportret_van_een_Batak_bruid_en_bruidegom_SumatraTMnr_60024921.jpg' },
-  { topic: 'Aesan Gede', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/COLLECTIE_TROPENMUSEUM_Een_echtpaar_uit_Palembang_in_traditionele_kleding_Palembang_Sumatra_TMnr_60042456.jpg/600px-COLLECTIE_TROPENMUSEUM_Een_echtpaar_uit_Palembang_in_traditionele_kleding_Palembang_Sumatra_TMnr_60042456.jpg' },
-  { topic: 'Kebaya', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kebaya_Encim.jpg/600px-Kebaya_Encim.jpg' },
+  { topic: 'Batik', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Indonesian_Batik.jpg/600px-Indonesian_Batik.jpg' },
+  { topic: 'Baju Bodo', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Baju_Bodo_Bugis_Makassar.jpg/600px-Baju_Bodo_Bugis_Makassar.jpg' },
+  { topic: 'Ulos', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Batak_Bride_2.jpg/600px-Batak_Bride_2.jpg' },
+  { topic: 'Aesan Gede', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Palembang_Dance_Gending_Sriwijaya_01.jpg/600px-Palembang_Dance_Gending_Sriwijaya_01.jpg' },
+  { topic: 'Kebaya', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Javanese_Princess_and_Maidservant.jpg/600px-Javanese_Princess_and_Maidservant.jpg' },
   { topic: 'Koteka', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Papuans_in_Koteka.jpg/600px-Papuans_in_Koteka.jpg' },
-  { topic: 'Gudeg', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gudeg_Jogja.jpg/600px-Gudeg_Jogja.jpg' },
-  { topic: 'Papeda', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Fish_Yellow_Soup_and_Papeda.jpg/600px-Fish_Yellow_Soup_and_Papeda.jpg' },
+  { topic: 'Gudeg', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gudeg_Yogya.jpg/600px-Gudeg_Yogya.jpg' },
+  { topic: 'Papeda', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Papeda_ikan_kuah_kuning.jpg/600px-Papeda_ikan_kuah_kuning.jpg' },
   { topic: 'Rendang', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Rendang_Daging_Sapi_Full.jpg/600px-Rendang_Daging_Sapi_Full.jpg' },
   { topic: 'Pempek', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Pempek_Palembang_Indonesia.jpg/600px-Pempek_Palembang_Indonesia.jpg' },
   { topic: 'Sate Lilit', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Sate_lilit.JPG/600px-Sate_lilit.JPG' },

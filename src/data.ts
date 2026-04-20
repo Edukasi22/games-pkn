@@ -25,28 +25,28 @@ export const ROUNDS: Round[] = [
         question: "Baju adat 'Ulos' berasal dari suku...",
         options: ["Batak", "Minangkabau", "Dayak", "Asmat"],
         answer: "Batak",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/COLLECTIE_TROPENMUSEUM_Studioportret_van_een_Batak_bruid_en_bruidegom_SumatraTMnr_60024921.jpg/600px-COLLECTIE_TROPENMUSEUM_Studioportret_van_een_Batak_bruid_en_bruidegom_SumatraTMnr_60024921.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Tarian_Tortor_Batak_Toba.jpg/600px-Tarian_Tortor_Batak_Toba.jpg"
       },
       {
         id: 102,
         question: "Baju adat 'Baju Bodo' berasal dari suku...",
         options: ["Bugis", "Toraja", "Madura", "Bali"],
         answer: "Bugis",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Buginese_Woman_in_traditional_clothe.jpg/600px-Buginese_Woman_in_traditional_clothe.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Baju_Bodo_Bugis_Makassar.jpg/600px-Baju_Bodo_Bugis_Makassar.jpg"
       },
       {
         id: 103,
         question: "Baju adat 'Aesan Gede' adalah ciri khas dari daerah...",
         options: ["Palembang", "Lampung", "Aceh", "Jambi"],
         answer: "Palembang",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/COLLECTIE_TROPENMUSEUM_Een_echtpaar_uit_Palembang_in_traditionele_kleding_Palembang_Sumatra_TMnr_60042456.jpg/600px-COLLECTIE_TROPENMUSEUM_Een_echtpaar_uit_Palembang_in_traditionele_kleding_Palembang_Sumatra_TMnr_60042456.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Palembang_Dance_Gending_Sriwijaya_01.jpg/600px-Palembang_Dance_Gending_Sriwijaya_01.jpg"
       },
       {
         id: 104,
         question: "Baju adat 'Kebaya' yang anggun sering dikaitkan dengan suku...",
         options: ["Jawa", "Papua", "Dayak", "Minahasa"],
         answer: "Jawa",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kebaya_Encim.jpg/600px-Kebaya_Encim.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Javanese_Princess_and_Maidservant.jpg/600px-Javanese_Princess_and_Maidservant.jpg"
       },
       {
         id: 105,
@@ -67,14 +67,14 @@ export const ROUNDS: Round[] = [
         question: "Makanan 'Gudeg' yang manis dan gurih berasal dari kota...",
         options: ["Yogyakarta", "Solo", "Semarang", "Salatiga"],
         answer: "Yogyakarta",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gudeg_Jogja.jpg/600px-Gudeg_Jogja.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gudeg_Yogya.jpg/600px-Gudeg_Yogya.jpg"
       },
       {
         id: 202,
         question: "Suku mana yang terkenal dengan makanan 'Papeda'?",
         options: ["Papua", "Ambon", "Manado", "Flores"],
         answer: "Papua",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Fish_Yellow_Soup_and_Papeda.jpg/600px-Fish_Yellow_Soup_and_Papeda.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Papeda_ikan_kuah_kuning.jpg/600px-Papeda_ikan_kuah_kuning.jpg"
       },
       {
         id: 203,

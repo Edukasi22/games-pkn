@@ -390,6 +390,9 @@ export default function App() {
                           alt="Nusantara" 
                           className={`w-full h-full object-cover transition-all duration-700 ${!isQuestionVisible ? 'blur-3xl scale-150' : 'blur-0 scale-100'}`}
                           referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${currentQuestion.answer}/800/450`;
+                          }}
                         />
                         {appState === 'answer' && (
                           <motion.div 
