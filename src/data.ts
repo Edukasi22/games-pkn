@@ -25,28 +25,28 @@ export const ROUNDS: Round[] = [
         question: "Baju adat 'Ulos' berasal dari suku...",
         options: ["Batak", "Minangkabau", "Dayak", "Asmat"],
         answer: "Batak",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Tarian_Tortor_Batak_Toba.jpg/600px-Tarian_Tortor_Batak_Toba.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Batak_Bride_2.jpg/600px-Batak_Bride_2.jpg"
       },
       {
         id: 102,
         question: "Baju adat 'Baju Bodo' berasal dari suku...",
         options: ["Bugis", "Toraja", "Madura", "Bali"],
         answer: "Bugis",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Baju_Bodo_Bugis_Makassar.jpg/600px-Baju_Bodo_Bugis_Makassar.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Bugis_traditional_clothes.jpg/600px-Bugis_traditional_clothes.jpg"
       },
       {
         id: 103,
         question: "Baju adat 'Aesan Gede' adalah ciri khas dari daerah...",
         options: ["Palembang", "Lampung", "Aceh", "Jambi"],
         answer: "Palembang",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Palembang_Dance_Gending_Sriwijaya_01.jpg/600px-Palembang_Dance_Gending_Sriwijaya_01.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Pakaian_Adat_Sumsel_Aesan_Gede_01.jpg/600px-Pakaian_Adat_Sumsel_Aesan_Gede_01.jpg"
       },
       {
         id: 104,
         question: "Baju adat 'Kebaya' yang anggun sering dikaitkan dengan suku...",
         options: ["Jawa", "Papua", "Dayak", "Minahasa"],
         answer: "Jawa",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Javanese_Princess_and_Maidservant.jpg/600px-Javanese_Princess_and_Maidservant.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kebaya_Encim.jpg/600px-Kebaya_Encim.jpg"
       },
       {
         id: 105,
@@ -67,7 +67,7 @@ export const ROUNDS: Round[] = [
         question: "Makanan 'Gudeg' yang manis dan gurih berasal dari kota...",
         options: ["Yogyakarta", "Solo", "Semarang", "Salatiga"],
         answer: "Yogyakarta",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gudeg_Yogya.jpg/600px-Gudeg_Yogya.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Gudeg.jpg/600px-Gudeg.jpg"
       },
       {
         id: 202,
@@ -81,7 +81,7 @@ export const ROUNDS: Round[] = [
         question: "Makanan khas 'Rendang' diakui dunia berasal dari suku...",
         options: ["Minangkabau", "Melayu", "Betawi", "Sunda"],
         answer: "Minangkabau",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Rendang_Daging_Sapi_Full.jpg/600px-Rendang_Daging_Sapi_Full.jpg"
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Rendang_Western_Sumatra.jpg/600px-Rendang_Western_Sumatra.jpg"
       },
       {
         id: 204,
