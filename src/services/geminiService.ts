@@ -23,22 +23,31 @@ export interface GeneratedRound {
 
 export async function generateGameQuestions(): Promise<GeneratedRound[]> {
   const ai = getAI();
-  const prompt = `Generate a unique set of 3 rounds for a game show trivia called "TEBAK PANCASILA" for 5th grade students.
-  Each round must have 5 questions.
-  Make the questions diverse, fun, and educationally accurate.
+  
+  // Dynamic diversity: Randomly pick focus regions to prevent repetition
+  const allRegions = ['Flores', 'Sumba', 'Timor', 'Alor', 'Rote', 'Sabu', 'Lembata', 'Adonara', 'Solor'];
+  const shuffledRegions = [...allRegions].sort(() => Math.random() - 0.5);
+  const selectedRegions = shuffledRegions.slice(0, 3).join(', ');
+  const seed = Math.random().toString(36).substring(7);
+
+  const prompt = `Generate a unique set of 3 rounds for a game show trivia called "KUIS PLSBD NTT" (Pendidikan Lingkungan dan Sosial Budaya Nusa Tenggara Timur).
+  Session Seed: ${seed}
+  Focus Regions for this session: ${selectedRegions}
+  
+  Each round must have 5 questions (Total 15 questions).
+  Make the questions diverse, fun, and educationally accurate for elementary students.
   
   Rounds:
-  1. Babak 1: Lambang & Sila Pancasila (Symbols and Principles)
-  2. Babak 2: Sejarah Kemerdekaan & Tokoh (Independence History & Figures)
-  3. Babak 3: Nilai-Nilai Pancasila dalam Kehidupan (Pancasila Values in Life)
+  1. Babak 1: Alam & Lingkungan NTT (Focus on flora, fauna, and unique landscapes of ${shuffledRegions[0]})
+  2. Babak 2: Budaya & Tradisi (Focus on traditions, music, and customs of ${shuffledRegions[1]})
+  3. Babak 3: Kehidupan Sosial & Kearifan Lokal (Focus on community life and local wisdom of ${shuffledRegions[2]})
   
   Important:
-  - Generate TOTALLY DIFFERENT questions every time. Focus on variety.
-  - Round 1 covers the meaning of symbols (eagle, banyan tree, etc.) and what each sifa stands for.
-  - Round 2 covers heroes like Soekarno, Hatta, and key dates.
-  - Round 3 covers everyday examples of practicing Pancasila (sharing, helping, etc.).
+  - YOU MUST Generate TOTALLY DIFFERENT questions from common standard quiz sets. 
+  - Since this is for NTT specifically, avoid ONLY asking about Komodo or Sasando. Dig deeper into local stories, specific regional foods, and specific island geography.
+  - Mix in questions from the selected regions: ${selectedRegions}.
   - Ensure the "options" array contains 4 distinct choices.
-  - The "imageUrl" field can be an empty string or a generic keyword.
+  - The "imageUrl" field can be an empty string.
   - Language: Indonesian.`;
 
   const response = await ai.models.generateContent({

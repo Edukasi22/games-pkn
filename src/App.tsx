@@ -224,10 +224,10 @@ export default function App() {
               <Trophy size={100} className="text-yellow-400 mx-auto drop-shadow-xl" />
             </motion.div>
             <h1 className="text-6xl md:text-8xl font-black mb-4 uppercase tracking-tighter drop-shadow-2xl">
-              TEBAK<br />PANCASILA
+              KUIS<br />PLSBD NTT
             </h1>
             <p className="text-xl md:text-2xl mb-12 opacity-90 max-w-2xl font-medium">
-              Edisi Spesial Kelas 5 SD. Uji pengetahuanmu tentang dasar negara dan sejarah Indonesia!
+              Edisi Khusus Nusa Tenggara Timur. Mari belajar tentang kekayaan budaya dan lingkungan NTT!
             </p>
             <div className="flex flex-col gap-4">
               <button
@@ -264,7 +264,7 @@ export default function App() {
           >
             <Loader2 size={100} className="text-yellow-400 animate-spin mb-8" />
             <h2 className="text-4xl font-black uppercase mb-4">Menyiapkan Soal Pintar...</h2>
-            <p className="text-xl text-blue-200">AI sedang menyusun tantangan Pancasila dan sejarah untukmu!</p>
+            <p className="text-xl text-blue-200">AI sedang menyusun tantangan PLSBD Nusa Tenggara Timur untukmu!</p>
           </motion.div>
         )}
 
@@ -340,7 +340,7 @@ export default function App() {
                 Babak {currentRoundIdx + 1}
               </span>
               <h2 className="text-5xl md:text-6xl font-black mb-6 uppercase leading-tight drop-shadow-xl italic">
-                {currentRound.title.split(': ')[1]}
+                {currentRound.title.includes(': ') ? currentRound.title.split(': ')[1] : currentRound.title}
               </h2>
               <p className="text-xl text-blue-100 mb-12 font-medium">
                 {currentRound.description}
@@ -642,7 +642,7 @@ export default function App() {
               onClick={resetGame}
               className="flex items-center gap-3 px-12 py-6 bg-white text-indigo-900 rounded-full text-3xl font-black transition-all shadow-2xl hover:scale-105"
             >
-              MAIN LAGI
+              MAIN LAGI (SOAL BARU)
             </button>
           </motion.div>
         )}

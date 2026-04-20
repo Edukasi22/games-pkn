@@ -17,126 +17,126 @@ export interface Round {
 export const ROUNDS: Round[] = [
   {
     id: 1,
-    title: "Babak 1: Lambang & Sila",
-    description: "Tebak lambang dan isi dari sila-sila Pancasila!",
+    title: "Babak 1: Alam & Lingkungan NTT",
+    description: "Tebak tentang kekayaan alam dan lingkungan di NTT!",
     questions: [
       {
         id: 101,
-        question: "Lambang dari Sila ke-1 Pancasila adalah...",
-        options: ["Bintang", "Rantai", "Pohon Beringin", "Kepala Banteng"],
-        answer: "Bintang",
+        question: "Hewan purba yang hanya ada di NTT, tepatnya di Pulau Komodo dan Rinca adalah...",
+        options: ["Komodo", "Badak", "Gajah", "Harimau"],
+        answer: "Komodo",
         imageUrl: ""
       },
       {
         id: 102,
-        question: "Sila ke-3 Pancasila berbunyi...",
-        options: ["Persatuan Indonesia", "Keadilan Sosial", "Kemanusiaan yang Adil", "Ketuhanan yang Maha Esa"],
-        answer: "Persatuan Indonesia",
+        question: "Danau tiga warna yang sangat terkenal di Pulau Flores adalah...",
+        options: ["Kelimutu", "Toba", "Batur", "Sentani"],
+        answer: "Kelimutu",
         imageUrl: ""
       },
       {
         id: 103,
-        question: "Lambang 'Padi dan Kapas' melambangkan sila ke...",
-        options: ["5", "4", "3", "2"],
-        answer: "5",
+        question: "NTT dikenal memiliki padang rumput yang luas, yang sering disebut...",
+        options: ["Sabana", "Hutan Hujan", "Gurun", "Rawa"],
+        answer: "Sabana",
         imageUrl: ""
       },
       {
         id: 104,
-        question: "Sila ke-2 disimbolkan dengan gambar...",
-        options: ["Rantai", "Bintang", "Pohon Beringin", "Kepala Banteng"],
-        answer: "Rantai",
+        question: "Sandal kayu yang menjadi ciri khas daerah NTT disebut...",
+        options: ["Sandal Jepit", "Lakamola", "Bakiak", "Terompah"],
+        answer: "Lakamola",
         imageUrl: ""
       },
       {
         id: 105,
-        question: "Bunyi Sila ke-5 adalah 'Keadilan Sosial bagi seluruh rakyat...'",
-        options: ["Indonesia", "Nusantara", "Dunia", "Bangsa"],
-        answer: "Indonesia",
+        question: "Tanaman yang menjadi sumber pangan alternatif di NTT karena tahan kekeringan adalah...",
+        options: ["Jagung", "Gandum", "Kedelai", "Kacang Tanah"],
+        answer: "Jagung",
         imageUrl: ""
       }
     ]
   },
   {
     id: 2,
-    title: "Babak 2: Sejarah Singkat",
-    description: "Uji pengetahuanmu tentang sejarah kelahiran Pancasila!",
+    title: "Babak 2: Budaya & Tradisi NTT",
+    description: "Uji pengetahuanmu tentang kebudayaan khas NTT!",
     questions: [
       {
         id: 201,
-        question: "Hari Lahir Pancasila diperingati setiap tanggal...",
-        options: ["1 Juni", "17 Agustus", "1 Oktober", "10 November"],
-        answer: "1 Juni",
+        question: "Alat musik petik tradisional NTT yang terbuat dari daun lontar adalah...",
+        options: ["Sasando", "Angklung", "Gamelan", "Kecapi"],
+        answer: "Sasando",
         imageUrl: ""
       },
       {
         id: 202,
-        question: "Siapa tokoh yang menyampaikan pidato tentang Pancasila pada 1 Juni 1945?",
-        options: ["Ir. Soekarno", "Moh. Hatta", "Moh. Yamin", "Mr. Soepomo"],
-        answer: "Ir. Soekarno",
+        question: "Rumah adat yang berbentuk kerucut di desa Wae Rebo, Manggarai disebut...",
+        options: ["Mbaru Niang", "Joglo", "Gadang", "Honai"],
+        answer: "Mbaru Niang",
         imageUrl: ""
       },
       {
         id: 203,
-        question: "Di mana proklamasi kemerdekaan Indonesia dibacakan?",
-        options: ["Jl. Pegangsaan Timur No. 56", "Istana Negara", "Monas", "Lubang Buaya"],
-        answer: "Jl. Pegangsaan Timur No. 56",
+        question: "Kain tenun ikat NTT yang terkenal dengan motif cantiknya disebut...",
+        options: ["Tenun Ikat", "Batik", "Songket", "Ulos"],
+        answer: "Tenun Ikat",
         imageUrl: ""
       },
       {
         id: 204,
-        question: "Lambang negara Indonesia adalah burung...",
-        options: ["Garuda", "Elang", "Cenderawasih", "Rajawali"],
-        answer: "Garuda",
+        question: "Tarian perang tradisional dari Sumba yang melibatkan kuda dan tombak kayu disebut...",
+        options: ["Pasola", "Ja'i", "Kecak", "Piring"],
+        answer: "Pasola",
         imageUrl: ""
       },
       {
         id: 205,
-        question: "Semboyan 'Bhinneka Tunggal Ika' artinya...",
-        options: ["Berbeda-beda tetapi tetap satu", "Berani karena benar", "Bersatu kita teguh", "Pantang menyerah"],
-        answer: "Berbeda-beda tetapi tetap satu",
+        question: "Tarian dari daerah Ngada yang ditarikan secara masal dalam lingkaran adalah...",
+        options: ["Ja'i", "Lego-lego", "Caci", "Kataga"],
+        answer: "Ja'i",
         imageUrl: ""
       }
     ]
   },
   {
     id: 3,
-    title: "Babak 3: Nilai-Nilai",
-    description: "Penerapan nilai Pancasila dalam kehidupan sehari-hari.",
+    title: "Babak 3: Kehidupan Sosial NTT",
+    description: "Kearifan lokal dan kehidupan masyarakat di NTT.",
     questions: [
       {
         id: 301,
-        question: "Menolong teman yang sedang kesulitan adalah pengamalan sila ke...",
-        options: ["2", "1", "3", "4"],
-        answer: "2",
+        question: "Tradisi berburu paus secara tradisional di NTT terdapat di desa...",
+        options: ["Lamalera", "Wae Rebo", "Bena", "Praijing"],
+        answer: "Lamalera",
         imageUrl: ""
       },
       {
-        id: 302,
-        question: "Menghormati teman yang sedang beribadah adalah contoh sila ke...",
-        options: ["1", "2", "3", "5"],
-        answer: "1",
-        imageUrl: ""
+         id: 302,
+         question: "Pohon yang dijuluki 'Pohon Kehidupan' di NTT karena hampir semua bagiannya berguna adalah...",
+         options: ["Lontar", "Kelapa", "Jati", "Beringin"],
+         answer: "Lontar",
+         imageUrl: ""
       },
       {
         id: 303,
-        question: "Bermusyawarah untuk mengambil keputusan bersama adalah sila ke...",
-        options: ["4", "3", "2", "5"],
-        answer: "4",
+        question: "Upacara syukur atas hasil panen di daerah Timor disebut dengan...",
+        options: ["Fulan Mutu", "Penti", "Reba", "Ka'aba"],
+        answer: "Fulan Mutu",
         imageUrl: ""
       },
       {
         id: 304,
-        question: "Bangga menggunakan produk buatan dalam negeri adalah sila ke...",
-        options: ["3", "4", "2", "1"],
-        answer: "3",
+        question: "Sirih pinang dalam budaya masyarakat NTT melambangkan...",
+        options: ["Persaudaraan", "Permusuhan", "Kekayaan", "Kesedihan"],
+        answer: "Persaudaraan",
         imageUrl: ""
       },
       {
         id: 305,
-        question: "Hidup hemat dan tidak boros merupakan pengamalan sila ke...",
-        options: ["5", "4", "3", "2"],
-        answer: "5",
+        question: "Mata uang tradisional yang digunakan dalam mas kawin di NTT (khususnya Alor) disebut...",
+        options: ["Moko", "Rupiah", "Dolar", "Emas"],
+        answer: "Moko",
         imageUrl: ""
       }
     ]
