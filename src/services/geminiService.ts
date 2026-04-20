@@ -21,45 +21,22 @@ export interface GeneratedRound {
   questions: GeneratedQuestion[];
 }
 
-// Map of topics to validated high-quality Wikimedia images for the AI to choose from
-const IMAGE_RESOURCES = [
-  { topic: 'Batik', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Indonesian_Batik.jpg/600px-Indonesian_Batik.jpg' },
-  { topic: 'Baju Bodo', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Bugis_traditional_clothes.jpg/600px-Bugis_traditional_clothes.jpg' },
-  { topic: 'Ulos', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Batak_Bride_2.jpg/600px-Batak_Bride_2.jpg' },
-  { topic: 'Aesan Gede', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Pakaian_Adat_Sumsel_Aesan_Gede_01.jpg/600px-Pakaian_Adat_Sumsel_Aesan_Gede_01.jpg' },
-  { topic: 'Kebaya', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kebaya_Encim.jpg/600px-Kebaya_Encim.jpg' },
-  { topic: 'Koteka', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Papuans_in_Koteka.jpg/600px-Papuans_in_Koteka.jpg' },
-  { topic: 'Gudeg', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Gudeg.jpg/600px-Gudeg.jpg' },
-  { topic: 'Papeda', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Papeda_ikan_kuah_kuning.jpg/600px-Papeda_ikan_kuah_kuning.jpg' },
-  { topic: 'Rendang', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Rendang_Western_Sumatra.jpg/600px-Rendang_Western_Sumatra.jpg' },
-  { topic: 'Pempek', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Pempek_Palembang_Indonesia.jpg/600px-Pempek_Palembang_Indonesia.jpg' },
-  { topic: 'Sate Lilit', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Sate_lilit.JPG/600px-Sate_lilit.JPG' },
-  { topic: 'Soto', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Soto_ayam_6.jpg/600px-Soto_ayam_6.jpg' },
-  { topic: 'Dayak', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Dayak_woman-costume1.jpg/600px-Dayak_woman-costume1.jpg' },
-  { topic: 'Sasak', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Sasak_girl_Lombok.jpg/600px-Sasak_girl_Lombok.jpg' },
-  { topic: 'Baduy', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Baduy_tribe_Banten_Indonesia.jpg/600px-Baduy_tribe_Banten_Indonesia.jpg' },
-  { topic: 'Asmat', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Asmat_Tribesmen.jpg/600px-Asmat_Tribesmen.jpg' },
-  { topic: 'Borobudur', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Borobudur_Temple.jpg/600px-Borobudur_Temple.jpg' },
-  { topic: 'Wayang', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Wayang_Kulit_Purwa_1.jpg/600px-Wayang_Kulit_Purwa_1.jpg' },
-  { topic: 'Gamelan', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Gamelan_Set_Yogyakarta.jpg/600px-Gamelan_Set_Yogyakarta.jpg' },
-];
-
 export async function generateGameQuestions(): Promise<GeneratedRound[]> {
   const ai = getAI();
-  const prompt = `Generate a set of 3 rounds for a game show trivia called "Tebak Suku Nusantara" for 5th grade students.
+  const prompt = `Generate a unique set of 3 rounds for a game show trivia called "Tebak Suku Nusantara" for 5th grade students.
   Each round must have 5 questions.
+  Make the questions diverse, fun, and educationally accurate.
   
   Rounds:
-  1. Babak 1: Baju Adat (Traditional Clothes)
-  2. Babak 2: Makanan Khas (Traditional Food)
-  3. Babak 3: Lokasi & Suku (Locations and Tribes)
+  1. Babak 1: Baju Adat & Pakaian (Culture & Clothing)
+  2. Babak 2: Makanan & Minuman Khas (Culinary)
+  3. Babak 3: Lokasi, Suku & Tradisi (Geography and Traditions)
   
-  For the "imageUrl", you MUST pick the most relevant URL from the list below matching the question's answer or topic:
-  ${IMAGE_RESOURCES.map(r => `${r.topic}: ${r.url}`).join('\n')}
-  
-  If none fit exactly, pick the closest cultural match.
-  Ensure questions are educationally accurate and suitable for children.
-  Language: Indonesian.`;
+  Important:
+  - Generate DIFFERENT questions every time. 
+  - Ensure the "options" array contains 4 distinct choices.
+  - The "imageUrl" field can be an empty string or a generic keyword.
+  - Language: Indonesian.`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",

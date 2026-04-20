@@ -51,21 +51,51 @@ export default function App() {
     soundService.playStart();
     try {
       const generated = await generateGameQuestions();
-      // Map generated to Round interface format
+      
+      // Shuffle helper
+      const shuffle = <T,>(array: T[]): T[] => {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+      };
+
+      // Map generated to Round interface format with shuffled options
       const mappedRounds: Round[] = generated.map((r, rIdx) => ({
         id: rIdx + 1,
         title: r.title,
         description: r.description,
         questions: r.questions.map((q, qIdx) => ({
           id: (rIdx + 1) * 100 + qIdx,
-          ...q
+          ...q,
+          options: shuffle(q.options)
         }))
       }));
       setRounds(mappedRounds);
       setAppState('setup');
     } catch (error) {
       console.error(error);
-      setAppState('setup'); // Fallback to static questions
+      // Fallback: Shuffle and use static questions if AI fails
+      const shuffle = <T,>(array: T[]): T[] => {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+      };
+
+      const shuffledStatic = STATIC_ROUNDS.map(r => ({
+        ...r,
+        questions: r.questions.map(q => ({
+          ...q,
+          options: shuffle(q.options)
+        }))
+      }));
+      setRounds(shuffledStatic);
+      setAppState('setup'); 
     }
   };
 
