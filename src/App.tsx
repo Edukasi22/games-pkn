@@ -2,24 +2,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Trophy, 
-  Users, 
-  Timer, 
   ArrowRight, 
-  ArrowLeft, 
   Play, 
-  RefreshCcw, 
   CheckCircle2, 
   Plus,
   Minus,
-  Info,
   Sparkles,
   Loader2,
-  Home,
-  Sun,
-  PartyPopper,
-  Zap,
-  Star,
-  Smile
+  Home
 } from 'lucide-react';
 import { ROUNDS as STATIC_ROUNDS, type Round, type Question } from './data.ts';
 import { generateGameQuestions, type GeneratedRound } from './services/geminiService';
@@ -34,8 +24,6 @@ export default function App() {
   const [rounds, setRounds] = useState<Round[]>(STATIC_ROUNDS);
   const [currentRoundIdx, setCurrentRoundIdx] = useState(0);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
-  const [timeLeft, setLeftTime] = useState(10);
-  const [timerActive, setTimerActive] = useState(false);
   const [buzzedTeam, setBuzzedTeam] = useState<BuzzedTeam>(null);
   const [isQuestionVisible, setIsQuestionVisible] = useState(false);
   
@@ -132,33 +120,16 @@ export default function App() {
     setAppState('setup');
   };
 
-  // Timer logic
-  useEffect(() => {
-    let interval: number;
-    if (timerActive && timeLeft > 0) {
-      interval = window.setInterval(() => {
-        setLeftTime((prev) => prev - 1);
-        if (timeLeft <= 3) soundService.playClick();
-      }, 1000);
-    } else if (timeLeft === 0 && timerActive) {
-      setTimerActive(false);
-      soundService.playFail();
-    }
-    return () => clearInterval(interval);
-  }, [timerActive, timeLeft]);
-
+  // Buzzer logic
   const handleBuzz = (team: 'A' | 'B') => {
-    if (buzzedTeam || !timerActive) return;
+    if (buzzedTeam) return;
     soundService.playBuzz();
     setBuzzedTeam(team);
-    setTimerActive(false); // Stop timer when someone buzzes
   };
 
   const startQuestion = () => {
     soundService.playClick();
     setIsQuestionVisible(true);
-    setLeftTime(10);
-    setTimerActive(true);
     setBuzzedTeam(null);
   };
 
@@ -180,8 +151,6 @@ export default function App() {
     setCurrentQuestionIdx(0);
     setTeamA({ name: 'Siswa A', score: 0 });
     setTeamB({ name: 'Siswa B', score: 0 });
-    setTimerActive(false);
-    setLeftTime(10);
     setBuzzedTeam(null);
     setIsQuestionVisible(false);
     setRounds(STATIC_ROUNDS);
@@ -191,8 +160,6 @@ export default function App() {
     soundService.playClick();
     if (currentQuestionIdx < currentRound.questions.length - 1) {
       setCurrentQuestionIdx(prev => prev + 1);
-      setLeftTime(10);
-      setTimerActive(false);
       setBuzzedTeam(null);
       setIsQuestionVisible(false);
       setAppState('playing');
@@ -218,8 +185,6 @@ export default function App() {
     soundService.playClick();
     setAppState(state);
     if (state === 'playing') {
-      setLeftTime(10);
-      setTimerActive(false);
       setBuzzedTeam(null);
       setIsQuestionVisible(false);
     }
@@ -259,10 +224,10 @@ export default function App() {
               <Trophy size={100} className="text-yellow-400 mx-auto drop-shadow-xl" />
             </motion.div>
             <h1 className="text-6xl md:text-8xl font-black mb-4 uppercase tracking-tighter drop-shadow-2xl">
-              Tebak Suku<br />Nusantara
+              TEBAK<br />PANCASILA
             </h1>
             <p className="text-xl md:text-2xl mb-12 opacity-90 max-w-2xl font-medium">
-              Edisi Spesial Kelas 5 SD. Uji pengetahuanmu tentang kebudayaan Indonesia yang kaya!
+              Edisi Spesial Kelas 5 SD. Uji pengetahuanmu tentang dasar negara dan sejarah Indonesia!
             </p>
             <div className="flex flex-col gap-4">
               <button
@@ -299,7 +264,7 @@ export default function App() {
           >
             <Loader2 size={100} className="text-yellow-400 animate-spin mb-8" />
             <h2 className="text-4xl font-black uppercase mb-4">Menyiapkan Soal Pintar...</h2>
-            <p className="text-xl text-blue-200">AI sedang menyusun tantangan nusantara spesial untukmu!</p>
+            <p className="text-xl text-blue-200">AI sedang menyusun tantangan Pancasila dan sejarah untukmu!</p>
           </motion.div>
         )}
 
@@ -314,7 +279,7 @@ export default function App() {
           >
             <div className="bg-white/10 backdrop-blur-md p-12 rounded-3xl border border-white/20 w-full max-w-3xl shadow-2xl">
               <div className="flex items-center gap-4 mb-10">
-                <Users size={48} className="text-yellow-400" />
+                <Trophy size={48} className="text-yellow-400" />
                 <h2 className="text-4xl font-bold">Siapkan Tim</h2>
               </div>
               
@@ -344,7 +309,7 @@ export default function App() {
                   onClick={() => goToState('home')}
                   className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-bold flex items-center gap-2"
                 >
-                  <ArrowLeft size={20} /> Kembali
+                   Kembali
                 </button>
                 <button 
                   onClick={() => goToState('round_intro')}
@@ -374,15 +339,15 @@ export default function App() {
               <span className="inline-block px-6 py-2 bg-yellow-400 text-indigo-900 font-black rounded-full mb-6 tracking-widest uppercase text-xl">
                 Babak {currentRoundIdx + 1}
               </span>
-              <h2 className="text-7xl md:text-8xl font-black mb-6 uppercase leading-tight drop-shadow-xl italic">
+              <h2 className="text-5xl md:text-6xl font-black mb-6 uppercase leading-tight drop-shadow-xl italic">
                 {currentRound.title.split(': ')[1]}
               </h2>
-              <p className="text-2xl text-blue-100 mb-12 font-medium">
+              <p className="text-xl text-blue-100 mb-12 font-medium">
                 {currentRound.description}
               </p>
               <button
                 onClick={() => goToState('playing')}
-                className="group relative px-16 py-8 bg-white text-indigo-900 rounded-2xl text-4xl font-black hover:bg-yellow-400 transition-all shadow-2xl"
+                className="group relative px-12 py-6 bg-white text-indigo-900 rounded-2xl text-2xl font-black hover:bg-yellow-400 transition-all shadow-2xl"
               >
                 MULAI PERTANYAAN
                 <div className="absolute -bottom-2 -right-2 w-full h-full border-2 border-white rounded-2xl -z-10 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform" />
@@ -422,20 +387,19 @@ export default function App() {
             {/* Header / Score & Timer */}
             <header className="relative z-20 flex flex-col md:flex-row justify-between items-center gap-6 p-6 md:p-8">
               <div className="flex gap-4 md:gap-8">
-                <div className={`transition-all duration-300 ${buzzedTeam === 'A' ? 'scale-110 ring-8 ring-blue-400' : buzzedTeam === 'B' ? 'opacity-40 grayscale' : ''} bg-blue-600 rounded-3xl p-5 min-w-[180px] shadow-2xl border-b-8 border-blue-800`}>
-                  <p className="text-sm uppercase font-black text-blue-200 mb-1">{teamA.name}</p>
-                  <p className="text-5xl font-black">{teamA.score}</p>
+                <div className={`transition-all duration-300 ${buzzedTeam === 'A' ? 'scale-110 ring-8 ring-blue-400' : buzzedTeam === 'B' ? 'opacity-40 grayscale' : ''} bg-blue-600 rounded-3xl p-4 min-w-[160px] shadow-2xl border-b-8 border-blue-800 flex items-center justify-between`}>
+                  <div>
+                    <p className="text-xs uppercase font-black text-blue-200 mb-0.5">{teamA.name}</p>
+                    <p className="text-4xl font-black">{teamA.score}</p>
+                  </div>
+                  <Trophy size={24} className="text-blue-200/30" />
                 </div>
-                <div className={`transition-all duration-300 ${buzzedTeam === 'B' ? 'scale-110 ring-8 ring-purple-400' : buzzedTeam === 'A' ? 'opacity-40 grayscale' : ''} bg-purple-600 rounded-3xl p-5 min-w-[180px] shadow-2xl border-b-8 border-purple-800`}>
-                  <p className="text-sm uppercase font-black text-purple-200 mb-1">{teamB.name}</p>
-                  <p className="text-5xl font-black">{teamB.score}</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col items-center">
-                <div className={`relative flex items-center justify-center px-10 py-6 rounded-full border-8 ${timeLeft <= 3 && timerActive ? 'border-red-500 animate-pulse' : 'border-white/40'} bg-black/30 backdrop-blur-md`}>
-                  <Timer className={`mr-4 ${timeLeft <= 3 && timerActive ? 'text-red-400' : 'text-yellow-400'}`} size={48} />
-                  <span className={`text-6xl font-black tabular-nums ${timeLeft <= 3 && timerActive ? 'text-red-400' : 'text-white'}`}>{timeLeft}s</span>
+                <div className={`transition-all duration-300 ${buzzedTeam === 'B' ? 'scale-110 ring-8 ring-purple-400' : buzzedTeam === 'A' ? 'opacity-40 grayscale' : ''} bg-purple-600 rounded-3xl p-4 min-w-[160px] shadow-2xl border-b-8 border-purple-800 flex items-center justify-between`}>
+                  <div>
+                    <p className="text-xs uppercase font-black text-purple-200 mb-0.5">{teamB.name}</p>
+                    <p className="text-4xl font-black">{teamB.score}</p>
+                  </div>
+                  <Trophy size={24} className="text-purple-200/30" />
                 </div>
               </div>
 
@@ -463,82 +427,30 @@ export default function App() {
               ) : (
                 <div className="w-full max-w-7xl">
                   {/* Question Display */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-10">
-                    <div className="lg:col-span-5">
-                      <div className="aspect-video rounded-[40px] overflow-hidden border-8 border-white/20 shadow-2xl relative bg-indigo-900/40 backdrop-blur-md flex items-center justify-center overflow-hidden">
-                        {/* Animated Cheerful Background Elements */}
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                          {[...Array(6)].map((_, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ 
-                                x: Math.random() * 400 - 200, 
-                                y: Math.random() * 200 - 100,
-                                opacity: 0.2,
-                                scale: 0.5 
-                              }}
-                              animate={{ 
-                                y: [null, Math.random() * -100 - 50],
-                                rotate: [0, 360],
-                                opacity: [0.2, 0.4, 0.2],
-                                scale: [0.5, 0.8, 0.5]
-                              }}
-                              transition={{ 
-                                duration: 3 + Math.random() * 4, 
-                                repeat: Infinity, 
-                                ease: "easeInOut" 
-                              }}
-                              className="absolute"
-                            >
-                              {i % 2 === 0 ? <Star className="text-yellow-400" size={40} /> : <Zap className="text-blue-400" size={40} />}
-                            </motion.div>
-                          ))}
-                        </div>
-
-                        <motion.div
-                          animate={{ 
-                            scale: [1, 1.1, 1],
-                            rotate: [0, 5, -5, 0]
-                          }}
-                          transition={{ 
-                            duration: 4, 
-                            repeat: Infinity, 
-                            ease: "easeInOut" 
-                          }}
-                          className="relative z-10 flex flex-col items-center gap-4"
-                        >
-                          <div className="p-8 bg-yellow-400 rounded-full shadow-[0_0_50px_rgba(250,204,21,0.4)]">
-                            <Sun size={80} className="text-indigo-900 animate-spin-slow" />
-                          </div>
-                          <div className="flex gap-4">
-                            <Sparkles className="text-yellow-400" size={32} />
-                            <Smile className="text-white" size={32} />
-                            <PartyPopper className="text-pink-400" size={32} />
-                          </div>
-                        </motion.div>
-
-                        {appState === 'answer' && (
-                          <motion.div 
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="absolute inset-0 bg-green-500 flex flex-col items-center justify-center p-8 text-center z-20"
-                          >
-                            <CheckCircle2 size={100} className="mb-4 text-white" />
-                            <h3 className="text-3xl font-black uppercase mb-2 text-white">JAWABAN:</h3>
-                            <p className="text-6xl font-black tracking-tight text-white">{currentQuestion.answer}</p>
-                          </motion.div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="lg:col-span-7 bg-white/95 text-indigo-900 p-10 rounded-[40px] shadow-2xl border-l-[24px] border-yellow-400">
-                      <h2 className="text-5xl font-black leading-[1.2]">
+                  <div className="flex flex-col gap-8 mb-10 relative">
+                    <div className="bg-white/95 text-indigo-900 p-6 md:p-8 rounded-[30px] shadow-2xl border-b-[8px] border-yellow-400 text-center">
+                      <h2 className="text-2xl md:text-3xl font-black leading-tight tracking-tight uppercase">
                         {currentQuestion.question}
                       </h2>
                     </div>
+
+                    {appState === 'answer' && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none"
+                      >
+                        <div className="bg-green-500 text-white p-12 rounded-[40px] shadow-[0_0_80px_rgba(34,197,94,0.5)] border-4 border-white flex flex-col items-center justify-center animate-bounce-slow pointer-events-auto">
+                          <CheckCircle2 size={80} className="mb-4 drop-shadow-md" />
+                          <h3 className="text-2xl font-black uppercase mb-2 opacity-90 tracking-widest">JAWABAN BENAR:</h3>
+                          <p className="text-5xl md:text-6xl font-black tracking-tighter drop-shadow-xl italic">{currentQuestion.answer}</p>
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
 
                   {/* Options / Action Area */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 relative">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 relative">
                     {currentQuestion.options.map((option, idx) => {
                       const isCorrect = option === currentQuestion.answer;
                       const isAnswerState = appState === 'answer';
@@ -547,12 +459,12 @@ export default function App() {
                         <div 
                           key={idx}
                           className={`
-                            p-8 rounded-3xl text-3xl font-black flex items-center gap-6 transition-all duration-300
-                            ${isAnswerState ? (isCorrect ? 'bg-green-500 text-white scale-105 shadow-2xl ring-8 ring-green-300' : 'bg-red-500/20 text-white/30') : 'bg-white/10 hover:bg-white/20 border-4 border-white/20'}
+                            p-6 rounded-3xl text-2xl md:text-3xl font-black flex items-center gap-6 transition-all duration-300
+                            ${isAnswerState ? (isCorrect ? 'bg-green-500 text-white scale-105 shadow-2xl ring-8 ring-green-300' : 'bg-red-500/20 text-white/30') : 'bg-white/10 hover:bg-white/20 border-4 border-white/20 shadow-lg'}
                           `}
                         >
-                          <span className="w-14 h-14 rounded-2xl bg-black/20 flex items-center justify-center text-2xl">{String.fromCharCode(65 + idx)}</span>
-                          {option}
+                          <span className="w-14 h-14 rounded-2xl bg-black/20 flex items-center justify-center text-xl shrink-0">{String.fromCharCode(65 + idx)}</span>
+                          <span className="leading-snug">{option}</span>
                         </div>
                       );
                     })}
@@ -560,40 +472,40 @@ export default function App() {
 
                   {/* IFP BUZZER AREA - GIANT BUTTONS */}
                   {!buzzedTeam && appState !== 'answer' && (
-                    <div className="flex gap-10 h-48 md:h-64">
+                    <div className="flex gap-8 h-48 md:h-56">
                        <button 
                         onMouseDown={() => handleBuzz('A')}
                         onTouchStart={() => handleBuzz('A')}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-400 rounded-[50px] border-b-[16px] border-blue-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-400 rounded-3xl border-b-[12px] border-blue-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
                        >
-                          <p className="text-2xl font-black text-blue-200 uppercase mb-2 group-active:translate-y-2">TEKAN SAYA!</p>
-                          <span className="text-6xl font-black group-active:translate-y-2 uppercase">{teamA.name}</span>
+                          <p className="text-xl font-black text-blue-200 uppercase mb-2 tracking-widest group-active:translate-y-2">TEKAN SAYA!</p>
+                          <span className="text-4xl md:text-6xl font-black group-active:translate-y-2 uppercase drop-shadow-md">{teamA.name}</span>
                        </button>
                        <button 
                         onMouseDown={() => handleBuzz('B')}
                         onTouchStart={() => handleBuzz('B')}
-                        className="flex-1 bg-purple-600 hover:bg-purple-500 active:bg-purple-400 rounded-[50px] border-b-[16px] border-purple-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
+                        className="flex-1 bg-purple-600 hover:bg-purple-500 active:bg-purple-400 rounded-3xl border-b-[12px] border-purple-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
                        >
-                          <p className="text-2xl font-black text-purple-200 uppercase mb-2 group-active:translate-y-2">TEKAN SAYA!</p>
-                          <span className="text-6xl font-black group-active:translate-y-2 uppercase">{teamB.name}</span>
+                          <p className="text-xl font-black text-purple-200 uppercase mb-2 tracking-widest group-active:translate-y-2">TEKAN SAYA!</p>
+                          <span className="text-4xl md:text-6xl font-black group-active:translate-y-2 uppercase drop-shadow-md">{teamB.name}</span>
                        </button>
                     </div>
                   )}
 
                   {buzzedTeam && appState !== 'answer' && (
                     <motion.div 
-                      initial={{ y: 20, opacity: 0 }}
+                      initial={{ y: 30, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      className="flex flex-col items-center gap-8"
+                      className="flex flex-col items-center gap-6"
                     >
-                       <h3 className={`text-6xl font-black uppercase text-center ${buzzedTeam === 'A' ? 'text-blue-300' : 'text-purple-300'} pointer-events-none drop-shadow-lg`}>
+                       <h3 className={`text-4xl md:text-6xl font-black uppercase text-center ${buzzedTeam === 'A' ? 'text-blue-300' : 'text-purple-300'} pointer-events-none drop-shadow-lg italic tracking-tighter`}>
                           Waktunya {buzzedTeam === 'A' ? teamA.name : teamB.name} Menjawab!
                        </h3>
                        <button 
                         onClick={() => setAppState('answer')}
-                        className="px-16 py-8 bg-yellow-400 text-indigo-900 rounded-[30px] font-black text-4xl shadow-2xl flex items-center gap-4 transition-transform hover:scale-105"
+                        className="px-16 py-8 bg-yellow-400 text-indigo-900 rounded-3xl font-black text-4xl shadow-2xl flex items-center gap-6 transition-transform hover:scale-105 active:scale-95 border-b-[10px] border-yellow-600"
                       >
-                         CEK JAWABAN <CheckCircle2 size={40} />
+                         CEK JAWABAN <CheckCircle2 size={50} />
                       </button>
                     </motion.div>
                   )}
@@ -603,32 +515,32 @@ export default function App() {
 
             {/* Answer Control Overlay */}
             {appState === 'answer' && (
-              <footer className="relative z-30 bg-black/60 backdrop-blur-xl p-10 border-t-4 border-white/20 flex flex-col items-center gap-8">
-                <p className="text-3xl font-black uppercase tracking-widest text-yellow-400">Siapa yang dapat poin?</p>
-                <div className="flex flex-wrap justify-center gap-8">
+              <footer className="relative z-30 bg-black/60 backdrop-blur-xl p-8 border-t-4 border-white/20 flex flex-col items-center gap-6">
+                <p className="text-xl font-black uppercase tracking-widest text-yellow-400">Siapa yang dapat poin?</p>
+                <div className="flex flex-wrap justify-center gap-6">
                    <button 
                     onClick={() => {
                         updateScore('A', 10);
                         nextQuestion();
                     }}
-                    className={`px-12 py-6 bg-blue-600 hover:bg-blue-500 rounded-3xl font-black text-3xl shadow-xl border-b-8 border-blue-900 flex items-center gap-4 transition-transform hover:-translate-y-2`}
+                    className={`px-10 py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-2xl shadow-xl border-b-6 border-blue-900 flex items-center gap-3 transition-transform hover:-translate-y-1`}
                   >
-                    POIN UNTUK {teamA.name.toUpperCase()} <Plus size={40} />
+                    POIN UNTUK {teamA.name.toUpperCase()} <Plus size={32} />
                   </button>
                   <button 
                     onClick={() => {
                         updateScore('B', 10);
                         nextQuestion();
                     }}
-                    className={`px-12 py-6 bg-purple-600 hover:bg-purple-500 rounded-3xl font-black text-3xl shadow-xl border-b-8 border-purple-900 flex items-center gap-4 transition-transform hover:-translate-y-2`}
+                    className={`px-10 py-5 bg-purple-600 hover:bg-purple-500 rounded-2xl font-black text-2xl shadow-xl border-b-6 border-purple-900 flex items-center gap-3 transition-transform hover:-translate-y-1`}
                   >
-                    POIN UNTUK {teamB.name.toUpperCase()} <Plus size={40} />
+                    POIN UNTUK {teamB.name.toUpperCase()} <Plus size={32} />
                   </button>
                   <button 
                     onClick={nextQuestion}
-                    className="px-10 py-6 bg-white/10 hover:bg-white/20 rounded-3xl font-black text-2xl shadow-xl border-4 border-white/10 flex items-center gap-4"
+                    className="px-8 py-5 bg-white/10 hover:bg-white/20 rounded-2xl font-black text-xl shadow-xl border-2 border-white/10 flex items-center gap-3"
                   >
-                    TIDAK ADA POIN <ArrowRight size={32} />
+                    TIDAK ADA POIN <ArrowRight size={28} />
                   </button>
                 </div>
               </footer>
@@ -646,26 +558,26 @@ export default function App() {
             className="flex flex-col items-center justify-center min-h-screen p-6"
           >
              <div className="w-full max-w-4xl bg-white/10 backdrop-blur-xl p-10 md:p-16 rounded-[40px] border-4 border-white/10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">
-                <div className="flex items-center gap-6 mb-12 border-b-2 border-white/10 pb-8">
-                    <Trophy size={64} className="text-yellow-400" />
-                    <h2 className="text-6xl font-black uppercase tracking-tighter">Papan Skor</h2>
+                <div className="flex items-center gap-6 mb-10 border-b-2 border-white/10 pb-6">
+                    <Trophy size={48} className="text-yellow-400" />
+                    <h2 className="text-4xl font-black uppercase tracking-tighter">Papan Skor</h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-                    <div className="bg-blue-600/30 rounded-3xl p-10 border-2 border-blue-400/50 flex flex-col items-center">
-                        <span className="text-xl font-black uppercase text-blue-200 mb-2">{teamA.name}</span>
-                        <span className="text-9xl font-black mb-8">{teamA.score}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div className="bg-blue-600/30 rounded-3xl p-8 border-2 border-blue-400/50 flex flex-col items-center">
+                        <span className="text-lg font-black uppercase text-blue-200 mb-2">{teamA.name}</span>
+                        <span className="text-7xl font-black mb-6">{teamA.score}</span>
                         <div className="flex gap-4">
-                            <button onClick={() => updateScore('A', -10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Minus size={32}/></button>
-                            <button onClick={() => updateScore('A', 10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Plus size={32}/></button>
+                            <button onClick={() => updateScore('A', -10)} className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Minus size={24}/></button>
+                            <button onClick={() => updateScore('A', 10)} className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Plus size={24}/></button>
                         </div>
                     </div>
-                    <div className="bg-purple-600/30 rounded-3xl p-10 border-2 border-purple-400/50 flex flex-col items-center">
-                        <span className="text-xl font-black uppercase text-purple-200 mb-2">{teamB.name}</span>
-                        <span className="text-9xl font-black mb-8">{teamB.score}</span>
+                    <div className="bg-purple-600/30 rounded-3xl p-8 border-2 border-purple-400/50 flex flex-col items-center">
+                        <span className="text-lg font-black uppercase text-purple-200 mb-2">{teamB.name}</span>
+                        <span className="text-7xl font-black mb-6">{teamB.score}</span>
                         <div className="flex gap-4">
-                            <button onClick={() => updateScore('B', -10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Minus size={32}/></button>
-                            <button onClick={() => updateScore('B', 10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Plus size={32}/></button>
+                            <button onClick={() => updateScore('B', -10)} className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Minus size={24}/></button>
+                            <button onClick={() => updateScore('B', 10)} className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Plus size={24}/></button>
                         </div>
                     </div>
                 </div>
@@ -707,21 +619,21 @@ export default function App() {
                 <Trophy size={200} className="text-yellow-400 mx-auto drop-shadow-2xl" />
             </motion.div>
             
-            <h1 className="text-7xl font-black mb-4 uppercase drop-shadow-xl">Selesai!</h1>
+            <h1 className="text-5xl font-black mb-4 uppercase drop-shadow-xl">Selesai!</h1>
             
-            <div className="bg-white/10 backdrop-blur-md p-12 rounded-[50px] border-4 border-white/20 mb-12">
-                <p className="text-3xl font-bold mb-6 text-blue-200">PEMENANGNYA ADALAH...</p>
-                <h2 className="text-8xl md:text-9xl font-black mb-8 uppercase text-yellow-400 italic">
+            <div className="bg-white/10 backdrop-blur-md p-10 rounded-[40px] border-4 border-white/20 mb-12">
+                <p className="text-2xl font-bold mb-6 text-blue-200">PEMENANGNYA ADALAH...</p>
+                <h2 className="text-6xl md:text-7xl font-black mb-8 uppercase text-yellow-400 italic">
                     {teamA.score > teamB.score ? teamA.name : (teamB.score > teamA.score ? teamB.name : 'SERI!')}
                 </h2>
                 <div className="flex justify-center gap-12">
                     <div className="flex flex-col items-center">
                         <span className="text-sm font-bold uppercase text-white/60 mb-2">{teamA.name}</span>
-                        <span className="text-5xl font-black">{teamA.score}</span>
+                        <span className="text-4xl font-black">{teamA.score}</span>
                     </div>
                     <div className="flex flex-col items-center border-l border-white/20 pl-12">
                         <span className="text-sm font-bold uppercase text-white/60 mb-2">{teamB.name}</span>
-                        <span className="text-5xl font-black">{teamB.score}</span>
+                        <span className="text-4xl font-black">{teamB.score}</span>
                     </div>
                 </div>
             </div>
@@ -730,7 +642,7 @@ export default function App() {
               onClick={resetGame}
               className="flex items-center gap-3 px-12 py-6 bg-white text-indigo-900 rounded-full text-3xl font-black transition-all shadow-2xl hover:scale-105"
             >
-              MAIN LAGI <RefreshCcw size={28} />
+              MAIN LAGI
             </button>
           </motion.div>
         )}

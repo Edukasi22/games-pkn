@@ -23,17 +23,20 @@ export interface GeneratedRound {
 
 export async function generateGameQuestions(): Promise<GeneratedRound[]> {
   const ai = getAI();
-  const prompt = `Generate a unique set of 3 rounds for a game show trivia called "Tebak Suku Nusantara" for 5th grade students.
+  const prompt = `Generate a unique set of 3 rounds for a game show trivia called "TEBAK PANCASILA" for 5th grade students.
   Each round must have 5 questions.
   Make the questions diverse, fun, and educationally accurate.
   
   Rounds:
-  1. Babak 1: Baju Adat & Pakaian (Culture & Clothing)
-  2. Babak 2: Makanan & Minuman Khas (Culinary)
-  3. Babak 3: Lokasi, Suku & Tradisi (Geography and Traditions)
+  1. Babak 1: Lambang & Sila Pancasila (Symbols and Principles)
+  2. Babak 2: Sejarah Kemerdekaan & Tokoh (Independence History & Figures)
+  3. Babak 3: Nilai-Nilai Pancasila dalam Kehidupan (Pancasila Values in Life)
   
   Important:
-  - Generate DIFFERENT questions every time. 
+  - Generate TOTALLY DIFFERENT questions every time. Focus on variety.
+  - Round 1 covers the meaning of symbols (eagle, banyan tree, etc.) and what each sifa stands for.
+  - Round 2 covers heroes like Soekarno, Hatta, and key dates.
+  - Round 3 covers everyday examples of practicing Pancasila (sharing, helping, etc.).
   - Ensure the "options" array contains 4 distinct choices.
   - The "imageUrl" field can be an empty string or a generic keyword.
   - Language: Indonesian.`;
