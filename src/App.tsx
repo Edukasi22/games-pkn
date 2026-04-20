@@ -1,0 +1,622 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Trophy, 
+  Users, 
+  Timer, 
+  ArrowRight, 
+  ArrowLeft, 
+  Play, 
+  RefreshCcw, 
+  CheckCircle2, 
+  Plus,
+  Minus,
+  Info,
+  Sparkles,
+  Loader2,
+  Home
+} from 'lucide-react';
+import { ROUNDS as STATIC_ROUNDS, type Round, type Question } from './data.ts';
+import { generateGameQuestions, type GeneratedRound } from './services/geminiService';
+import { soundService } from './services/soundService';
+
+type AppState = 'home' | 'setup' | 'round_intro' | 'playing' | 'answer' | 'scoreboard' | 'winner' | 'loading';
+type BuzzedTeam = 'A' | 'B' | null;
+
+export default function App() {
+  // Game State
+  const [appState, setAppState] = useState<AppState>('home');
+  const [rounds, setRounds] = useState<Round[]>(STATIC_ROUNDS);
+  const [currentRoundIdx, setCurrentRoundIdx] = useState(0);
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
+  const [timeLeft, setLeftTime] = useState(10);
+  const [timerActive, setTimerActive] = useState(false);
+  const [buzzedTeam, setBuzzedTeam] = useState<BuzzedTeam>(null);
+  const [isQuestionVisible, setIsQuestionVisible] = useState(false);
+  
+  // Team Data
+  const [teamA, setTeamA] = useState({ name: 'Siswa A', score: 0 });
+  const [teamB, setTeamB] = useState({ name: 'Siswa B', score: 0 });
+  
+  const currentRound = rounds[currentRoundIdx];
+  const currentQuestion = currentRound?.questions[currentQuestionIdx];
+
+  const handleAIStart = async () => {
+    setAppState('loading');
+    soundService.playStart();
+    try {
+      const generated = await generateGameQuestions();
+      // Map generated to Round interface format
+      const mappedRounds: Round[] = generated.map((r, rIdx) => ({
+        id: rIdx + 1,
+        title: r.title,
+        description: r.description,
+        questions: r.questions.map((q, qIdx) => ({
+          id: (rIdx + 1) * 100 + qIdx,
+          ...q
+        }))
+      }));
+      setRounds(mappedRounds);
+      setAppState('setup');
+    } catch (error) {
+      console.error(error);
+      setAppState('setup'); // Fallback to static questions
+    }
+  };
+
+  // Timer logic
+  useEffect(() => {
+    let interval: number;
+    if (timerActive && timeLeft > 0) {
+      interval = window.setInterval(() => {
+        setLeftTime((prev) => prev - 1);
+        if (timeLeft <= 3) soundService.playClick();
+      }, 1000);
+    } else if (timeLeft === 0 && timerActive) {
+      setTimerActive(false);
+      soundService.playFail();
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, timeLeft]);
+
+  const handleBuzz = (team: 'A' | 'B') => {
+    if (buzzedTeam || !timerActive) return;
+    soundService.playBuzz();
+    setBuzzedTeam(team);
+    setTimerActive(false); // Stop timer when someone buzzes
+  };
+
+  const startQuestion = () => {
+    soundService.playClick();
+    setIsQuestionVisible(true);
+    setLeftTime(10);
+    setTimerActive(true);
+    setBuzzedTeam(null);
+  };
+
+  const updateScore = (team: 'A' | 'B', amount: number) => {
+    if (amount > 0) soundService.playSuccess();
+    else if (amount < 0) soundService.playFail();
+
+    if (team === 'A') {
+      setTeamA(prev => ({ ...prev, score: Math.max(0, prev.score + amount) }));
+    } else {
+      setTeamB(prev => ({ ...prev, score: Math.max(0, prev.score + amount) }));
+    }
+  };
+
+  const resetGame = () => {
+    soundService.playStart();
+    setAppState('home');
+    setCurrentRoundIdx(0);
+    setCurrentQuestionIdx(0);
+    setTeamA({ name: 'Siswa A', score: 0 });
+    setTeamB({ name: 'Siswa B', score: 0 });
+    setTimerActive(false);
+    setLeftTime(10);
+    setBuzzedTeam(null);
+    setIsQuestionVisible(false);
+    setRounds(STATIC_ROUNDS);
+  };
+
+  const nextQuestion = () => {
+    soundService.playClick();
+    if (currentQuestionIdx < currentRound.questions.length - 1) {
+      setCurrentQuestionIdx(prev => prev + 1);
+      setLeftTime(10);
+      setTimerActive(false);
+      setBuzzedTeam(null);
+      setIsQuestionVisible(false);
+      setAppState('playing');
+    } else {
+      setAppState('scoreboard');
+    }
+  };
+
+  const nextRound = () => {
+    soundService.playStart();
+    if (currentRoundIdx < rounds.length - 1) {
+      setCurrentRoundIdx(prev => prev + 1);
+      setCurrentQuestionIdx(0);
+      setBuzzedTeam(null);
+      setIsQuestionVisible(false);
+      setAppState('round_intro');
+    } else {
+      setAppState('winner');
+    }
+  };
+
+  const goToState = (state: AppState) => {
+    soundService.playClick();
+    setAppState(state);
+    if (state === 'playing') {
+      setLeftTime(10);
+      setTimerActive(false);
+      setBuzzedTeam(null);
+      setIsQuestionVisible(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 text-white font-sans overflow-hidden">
+      {/* Global Home Button (Non-Home states) */}
+      {appState !== 'home' && appState !== 'loading' && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          onClick={resetGame}
+          className="fixed top-6 right-6 z-50 p-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl border-2 border-white/20 transition-all shadow-xl group"
+          title="Ke Halaman Utama"
+        >
+          <Home className="text-white group-hover:text-yellow-400 transition-colors" size={24} />
+        </motion.button>
+      )}
+
+      <AnimatePresence mode="wait">
+        
+        {/* --- HOME PAGE --- */}
+        {appState === 'home' && (
+          <motion.div
+            key="home"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="flex flex-col items-center justify-center min-h-screen p-6 text-center"
+          >
+            <motion.div
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ repeat: Infinity, duration: 5 }}
+              className="mb-8"
+            >
+              <Trophy size={100} className="text-yellow-400 mx-auto drop-shadow-xl" />
+            </motion.div>
+            <h1 className="text-6xl md:text-8xl font-black mb-4 uppercase tracking-tighter drop-shadow-2xl">
+              Tebak Suku<br />Nusantara
+            </h1>
+            <p className="text-xl md:text-2xl mb-12 opacity-90 max-w-2xl font-medium">
+              Edisi Spesial Kelas 5 SD. Uji pengetahuanmu tentang kebudayaan Indonesia yang kaya!
+            </p>
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={handleAIStart}
+                className="flex items-center gap-3 px-12 py-6 bg-yellow-400 hover:bg-yellow-300 text-indigo-900 rounded-full text-3xl font-bold transition-all shadow-2xl hover:scale-105 active:scale-95"
+              >
+                MULAI GAME <Sparkles size={28} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* --- LOADING PAGE --- */}
+        {appState === 'loading' && (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center min-h-screen p-6 text-center"
+          >
+            <Loader2 size={100} className="text-yellow-400 animate-spin mb-8" />
+            <h2 className="text-4xl font-black uppercase mb-4">Menyiapkan Soal Pintar...</h2>
+            <p className="text-xl text-blue-200">AI sedang menyusun tantangan nusantara spesial untukmu!</p>
+          </motion.div>
+        )}
+
+        {/* --- SETUP PAGE --- */}
+        {appState === 'setup' && (
+          <motion.div
+            key="setup"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col items-center justify-center min-h-screen p-8"
+          >
+            <div className="bg-white/10 backdrop-blur-md p-12 rounded-3xl border border-white/20 w-full max-w-3xl shadow-2xl">
+              <div className="flex items-center gap-4 mb-10">
+                <Users size={48} className="text-yellow-400" />
+                <h2 className="text-4xl font-bold">Siapkan Tim</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                <div className="space-y-4">
+                  <label className="block text-lg font-bold uppercase tracking-widest text-blue-200">Nama Tim A</label>
+                  <input
+                    type="text"
+                    value={teamA.name}
+                    onChange={(e) => setTeamA(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full bg-white/20 border-2 border-white/30 rounded-xl p-4 text-2xl font-bold focus:border-yellow-400 outline-none transition-colors"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <label className="block text-lg font-bold uppercase tracking-widest text-purple-200">Nama Tim B</label>
+                  <input
+                    type="text"
+                    value={teamB.name}
+                    onChange={(e) => setTeamB(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full bg-white/20 border-2 border-white/30 rounded-xl p-4 text-2xl font-bold focus:border-yellow-400 outline-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-8">
+                <button 
+                  onClick={() => goToState('home')}
+                  className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-bold flex items-center gap-2"
+                >
+                  <ArrowLeft size={20} /> Kembali
+                </button>
+                <button 
+                  onClick={() => goToState('round_intro')}
+                  className="px-10 py-5 bg-yellow-400 hover:bg-yellow-300 text-indigo-900 rounded-xl font-black text-2xl shadow-xl flex items-center gap-2"
+                >
+                  Lanjut <ArrowRight size={28} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* --- ROUND INTRO --- */}
+        {appState === 'round_intro' && (
+          <motion.div
+            key="round_intro"
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="flex flex-col items-center justify-center min-h-screen p-6 text-center"
+          >
+            <motion.div
+              initial={{ y: 20 }}
+              animate={{ y: 0 }}
+              className="max-w-4xl"
+            >
+              <span className="inline-block px-6 py-2 bg-yellow-400 text-indigo-900 font-black rounded-full mb-6 tracking-widest uppercase text-xl">
+                Babak {currentRoundIdx + 1}
+              </span>
+              <h2 className="text-7xl md:text-8xl font-black mb-6 uppercase leading-tight drop-shadow-xl italic">
+                {currentRound.title.split(': ')[1]}
+              </h2>
+              <p className="text-2xl text-blue-100 mb-12 font-medium">
+                {currentRound.description}
+              </p>
+              <button
+                onClick={() => goToState('playing')}
+                className="group relative px-16 py-8 bg-white text-indigo-900 rounded-2xl text-4xl font-black hover:bg-yellow-400 transition-all shadow-2xl"
+              >
+                MULAI PERTANYAAN
+                <div className="absolute -bottom-2 -right-2 w-full h-full border-2 border-white rounded-2xl -z-10 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* --- PLAYING / QUESTION --- */}
+        {(appState === 'playing' || appState === 'answer') && (
+          <motion.div
+            key="playing"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col min-h-screen relative"
+          >
+            {/* Buzzer Background Overlays */}
+            <AnimatePresence>
+              {buzzedTeam === 'A' && (
+                <motion.div 
+                  initial={{ opacity: 0, x: -100 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-y-0 left-0 w-1/2 bg-blue-500/20 pointer-events-none z-0 border-r-8 border-blue-400"
+                />
+              )}
+              {buzzedTeam === 'B' && (
+                <motion.div 
+                  initial={{ opacity: 0, x: 100 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-y-0 right-0 w-1/2 bg-purple-500/20 pointer-events-none z-0 border-l-8 border-purple-400"
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Header / Score & Timer */}
+            <header className="relative z-20 flex flex-col md:flex-row justify-between items-center gap-6 p-6 md:p-8">
+              <div className="flex gap-4 md:gap-8">
+                <div className={`transition-all duration-300 ${buzzedTeam === 'A' ? 'scale-110 ring-8 ring-blue-400' : buzzedTeam === 'B' ? 'opacity-40 grayscale' : ''} bg-blue-600 rounded-3xl p-5 min-w-[180px] shadow-2xl border-b-8 border-blue-800`}>
+                  <p className="text-sm uppercase font-black text-blue-200 mb-1">{teamA.name}</p>
+                  <p className="text-5xl font-black">{teamA.score}</p>
+                </div>
+                <div className={`transition-all duration-300 ${buzzedTeam === 'B' ? 'scale-110 ring-8 ring-purple-400' : buzzedTeam === 'A' ? 'opacity-40 grayscale' : ''} bg-purple-600 rounded-3xl p-5 min-w-[180px] shadow-2xl border-b-8 border-purple-800`}>
+                  <p className="text-sm uppercase font-black text-purple-200 mb-1">{teamB.name}</p>
+                  <p className="text-5xl font-black">{teamB.score}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className={`relative flex items-center justify-center px-10 py-6 rounded-full border-8 ${timeLeft <= 3 && timerActive ? 'border-red-500 animate-pulse' : 'border-white/40'} bg-black/30 backdrop-blur-md`}>
+                  <Timer className={`mr-4 ${timeLeft <= 3 && timerActive ? 'text-red-400' : 'text-yellow-400'}`} size={48} />
+                  <span className={`text-6xl font-black tabular-nums ${timeLeft <= 3 && timerActive ? 'text-red-400' : 'text-white'}`}>{timeLeft}s</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="text-2xl font-black bg-black/30 backdrop-blur-md px-6 py-3 rounded-2xl border-2 border-white/20">
+                   {currentQuestionIdx + 1} / {currentRound.questions.length}
+                </div>
+                <button onClick={() => goToState('scoreboard')} className="p-4 bg-white/10 hover:bg-white/20 rounded-2xl transition-colors border-2 border-white/10">
+                  <Trophy size={28} className="text-yellow-400" />
+                </button>
+              </div>
+            </header>
+
+            {/* Main Content Area */}
+            <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pb-6">
+              {!isQuestionVisible ? (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={startQuestion}
+                  className="px-20 py-10 bg-yellow-400 text-indigo-900 rounded-[40px] text-6xl font-black shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center gap-6"
+                >
+                  <Play fill="currentColor" size={60} /> MULAI SOAL
+                </motion.button>
+              ) : (
+                <div className="w-full max-w-7xl">
+                  {/* Question Display */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-10">
+                    <div className="lg:col-span-5">
+                      <div className="aspect-video rounded-[40px] overflow-hidden border-8 border-white/20 shadow-2xl relative bg-black/20">
+                        <img 
+                          src={currentQuestion.imageUrl} 
+                          alt="Nusantara" 
+                          className={`w-full h-full object-cover transition-all duration-700 ${!isQuestionVisible ? 'blur-3xl scale-150' : 'blur-0 scale-100'}`}
+                          referrerPolicy="no-referrer"
+                        />
+                        {appState === 'answer' && (
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="absolute inset-0 bg-green-500/90 flex flex-col items-center justify-center p-8 text-center"
+                          >
+                            <CheckCircle2 size={100} className="mb-4" />
+                            <h3 className="text-3xl font-black uppercase mb-2">JAWABAN:</h3>
+                            <p className="text-6xl font-black tracking-tight">{currentQuestion.answer}</p>
+                          </motion.div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="lg:col-span-7 bg-white/95 text-indigo-900 p-10 rounded-[40px] shadow-2xl border-l-[24px] border-yellow-400">
+                      <h2 className="text-5xl font-black leading-[1.2]">
+                        {currentQuestion.question}
+                      </h2>
+                    </div>
+                  </div>
+
+                  {/* Options / Action Area */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 relative">
+                    {currentQuestion.options.map((option, idx) => {
+                      const isCorrect = option === currentQuestion.answer;
+                      const isAnswerState = appState === 'answer';
+                      
+                      return (
+                        <div 
+                          key={idx}
+                          className={`
+                            p-8 rounded-3xl text-3xl font-black flex items-center gap-6 transition-all duration-300
+                            ${isAnswerState ? (isCorrect ? 'bg-green-500 text-white scale-105 shadow-2xl ring-8 ring-green-300' : 'bg-red-500/20 text-white/30') : 'bg-white/10 hover:bg-white/20 border-4 border-white/20'}
+                          `}
+                        >
+                          <span className="w-14 h-14 rounded-2xl bg-black/20 flex items-center justify-center text-2xl">{String.fromCharCode(65 + idx)}</span>
+                          {option}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* IFP BUZZER AREA - GIANT BUTTONS */}
+                  {!buzzedTeam && appState !== 'answer' && (
+                    <div className="flex gap-10 h-48 md:h-64">
+                       <button 
+                        onMouseDown={() => handleBuzz('A')}
+                        onTouchStart={() => handleBuzz('A')}
+                        className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-400 rounded-[50px] border-b-[16px] border-blue-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
+                       >
+                          <p className="text-2xl font-black text-blue-200 uppercase mb-2 group-active:translate-y-2">PIJET SAYA!</p>
+                          <span className="text-6xl font-black group-active:translate-y-2 uppercase">{teamA.name}</span>
+                       </button>
+                       <button 
+                        onMouseDown={() => handleBuzz('B')}
+                        onTouchStart={() => handleBuzz('B')}
+                        className="flex-1 bg-purple-600 hover:bg-purple-500 active:bg-purple-400 rounded-[50px] border-b-[16px] border-purple-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
+                       >
+                          <p className="text-2xl font-black text-purple-200 uppercase mb-2 group-active:translate-y-2">PIJET SAYA!</p>
+                          <span className="text-6xl font-black group-active:translate-y-2 uppercase">{teamB.name}</span>
+                       </button>
+                    </div>
+                  )}
+
+                  {buzzedTeam && appState !== 'answer' && (
+                    <motion.div 
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="flex flex-col items-center gap-8"
+                    >
+                       <h3 className={`text-6xl font-black uppercase text-center ${buzzedTeam === 'A' ? 'text-blue-300' : 'text-purple-300'} pointer-events-none drop-shadow-lg`}>
+                          Waktunya {buzzedTeam === 'A' ? teamA.name : teamB.name} Menjawab!
+                       </h3>
+                       <button 
+                        onClick={() => setAppState('answer')}
+                        className="px-16 py-8 bg-yellow-400 text-indigo-900 rounded-[30px] font-black text-4xl shadow-2xl flex items-center gap-4 transition-transform hover:scale-105"
+                      >
+                         CEK JAWABAN <CheckCircle2 size={40} />
+                      </button>
+                    </motion.div>
+                  )}
+                </div>
+              )}
+            </main>
+
+            {/* Answer Control Overlay */}
+            {appState === 'answer' && (
+              <footer className="relative z-30 bg-black/60 backdrop-blur-xl p-10 border-t-4 border-white/20 flex flex-col items-center gap-8">
+                <p className="text-3xl font-black uppercase tracking-widest text-yellow-400">Siapa yang dapat poin?</p>
+                <div className="flex flex-wrap justify-center gap-8">
+                   <button 
+                    onClick={() => {
+                        updateScore('A', 10);
+                        nextQuestion();
+                    }}
+                    className={`px-12 py-6 bg-blue-600 hover:bg-blue-500 rounded-3xl font-black text-3xl shadow-xl border-b-8 border-blue-900 flex items-center gap-4 transition-transform hover:-translate-y-2`}
+                  >
+                    POIN UNTUK {teamA.name.toUpperCase()} <Plus size={40} />
+                  </button>
+                  <button 
+                    onClick={() => {
+                        updateScore('B', 10);
+                        nextQuestion();
+                    }}
+                    className={`px-12 py-6 bg-purple-600 hover:bg-purple-500 rounded-3xl font-black text-3xl shadow-xl border-b-8 border-purple-900 flex items-center gap-4 transition-transform hover:-translate-y-2`}
+                  >
+                    POIN UNTUK {teamB.name.toUpperCase()} <Plus size={40} />
+                  </button>
+                  <button 
+                    onClick={nextQuestion}
+                    className="px-10 py-6 bg-white/10 hover:bg-white/20 rounded-3xl font-black text-2xl shadow-xl border-4 border-white/10 flex items-center gap-4"
+                  >
+                    TIDAK ADA POIN <ArrowRight size={32} />
+                  </button>
+                </div>
+              </footer>
+            )}
+          </motion.div>
+        )}
+
+        {/* --- SCOREBOARD / MID-GAME SCORE --- */}
+        {appState === 'scoreboard' && (
+          <motion.div
+            key="scoreboard"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            className="flex flex-col items-center justify-center min-h-screen p-6"
+          >
+             <div className="w-full max-w-4xl bg-white/10 backdrop-blur-xl p-10 md:p-16 rounded-[40px] border-4 border-white/10 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">
+                <div className="flex items-center gap-6 mb-12 border-b-2 border-white/10 pb-8">
+                    <Trophy size={64} className="text-yellow-400" />
+                    <h2 className="text-6xl font-black uppercase tracking-tighter">Papan Skor</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+                    <div className="bg-blue-600/30 rounded-3xl p-10 border-2 border-blue-400/50 flex flex-col items-center">
+                        <span className="text-xl font-black uppercase text-blue-200 mb-2">{teamA.name}</span>
+                        <span className="text-9xl font-black mb-8">{teamA.score}</span>
+                        <div className="flex gap-4">
+                            <button onClick={() => updateScore('A', -10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Minus size={32}/></button>
+                            <button onClick={() => updateScore('A', 10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Plus size={32}/></button>
+                        </div>
+                    </div>
+                    <div className="bg-purple-600/30 rounded-3xl p-10 border-2 border-purple-400/50 flex flex-col items-center">
+                        <span className="text-xl font-black uppercase text-purple-200 mb-2">{teamB.name}</span>
+                        <span className="text-9xl font-black mb-8">{teamB.score}</span>
+                        <div className="flex gap-4">
+                            <button onClick={() => updateScore('B', -10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Minus size={32}/></button>
+                            <button onClick={() => updateScore('B', 10)} className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"><Plus size={32}/></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-6 justify-center">
+                    <button 
+                        onClick={() => goToState('playing')}
+                        className="px-10 py-5 bg-white text-indigo-900 rounded-2xl font-black font-2xl shadow-xl flex items-center gap-3 transition-transform hover:scale-105 active:scale-95"
+                    >
+                        KE PERTANYAAN <ArrowRight size={28} />
+                    </button>
+                    <button 
+                        onClick={nextRound}
+                        className="px-10 py-5 bg-yellow-400 text-indigo-900 rounded-2xl font-black font-2xl shadow-xl flex items-center gap-3 transition-transform hover:scale-105 active:scale-95"
+                    >
+                        LANJUT BABAK BARU <ArrowRight size={28} />
+                    </button>
+                </div>
+             </div>
+          </motion.div>
+        )}
+
+        {/* --- WINNER SCREEN --- */}
+        {appState === 'winner' && (
+          <motion.div
+            key="winner"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center justify-center min-h-screen p-6 text-center"
+          >
+            <motion.div
+                animate={{ 
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 10, -10, 0]
+                }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="mb-8"
+            >
+                <Trophy size={200} className="text-yellow-400 mx-auto drop-shadow-2xl" />
+            </motion.div>
+            
+            <h1 className="text-7xl font-black mb-4 uppercase drop-shadow-xl">Selesai!</h1>
+            
+            <div className="bg-white/10 backdrop-blur-md p-12 rounded-[50px] border-4 border-white/20 mb-12">
+                <p className="text-3xl font-bold mb-6 text-blue-200">PEMENANGNYA ADALAH...</p>
+                <h2 className="text-8xl md:text-9xl font-black mb-8 uppercase text-yellow-400 italic">
+                    {teamA.score > teamB.score ? teamA.name : (teamB.score > teamA.score ? teamB.name : 'SERI!')}
+                </h2>
+                <div className="flex justify-center gap-12">
+                    <div className="flex flex-col items-center">
+                        <span className="text-sm font-bold uppercase text-white/60 mb-2">{teamA.name}</span>
+                        <span className="text-5xl font-black">{teamA.score}</span>
+                    </div>
+                    <div className="flex flex-col items-center border-l border-white/20 pl-12">
+                        <span className="text-sm font-bold uppercase text-white/60 mb-2">{teamB.name}</span>
+                        <span className="text-5xl font-black">{teamB.score}</span>
+                    </div>
+                </div>
+            </div>
+
+            <button
+              onClick={resetGame}
+              className="flex items-center gap-3 px-12 py-6 bg-white text-indigo-900 rounded-full text-3xl font-black transition-all shadow-2xl hover:scale-105"
+            >
+              MAIN LAGI <RefreshCcw size={28} />
+            </button>
+          </motion.div>
+        )}
+
+      </AnimatePresence>
+
+      {/* Decorative Elements */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-30">
+        <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-blue-400 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[10%] right-[5%] w-96 h-96 bg-purple-500 rounded-full blur-[120px]" />
+        <div className="absolute top-[40%] right-[20%] w-48 h-48 bg-yellow-400 rounded-full blur-[80px]" />
+      </div>
+    </div>
+  );
+}
