@@ -520,7 +520,7 @@ export default function App() {
                         onTouchStart={() => handleBuzz('A')}
                         className="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-400 rounded-[50px] border-b-[16px] border-blue-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
                        >
-                          <p className="text-2xl font-black text-blue-200 uppercase mb-2 group-active:translate-y-2">PIJET SAYA!</p>
+                          <p className="text-2xl font-black text-blue-200 uppercase mb-2 group-active:translate-y-2">TEKAN SAYA!</p>
                           <span className="text-6xl font-black group-active:translate-y-2 uppercase">{teamA.name}</span>
                        </button>
                        <button 
@@ -528,7 +528,7 @@ export default function App() {
                         onTouchStart={() => handleBuzz('B')}
                         className="flex-1 bg-purple-600 hover:bg-purple-500 active:bg-purple-400 rounded-[50px] border-b-[16px] border-purple-900 shadow-2xl flex flex-col items-center justify-center group transition-all"
                        >
-                          <p className="text-2xl font-black text-purple-200 uppercase mb-2 group-active:translate-y-2">PIJET SAYA!</p>
+                          <p className="text-2xl font-black text-purple-200 uppercase mb-2 group-active:translate-y-2">TEKAN SAYA!</p>
                           <span className="text-6xl font-black group-active:translate-y-2 uppercase">{teamB.name}</span>
                        </button>
                     </div>
