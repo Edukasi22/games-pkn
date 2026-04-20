@@ -14,7 +14,12 @@ import {
   Info,
   Sparkles,
   Loader2,
-  Home
+  Home,
+  Sun,
+  PartyPopper,
+  Zap,
+  Star,
+  Smile
 } from 'lucide-react';
 import { ROUNDS as STATIC_ROUNDS, type Round, type Question } from './data.ts';
 import { generateGameQuestions, type GeneratedRound } from './services/geminiService';
@@ -384,25 +389,67 @@ export default function App() {
                   {/* Question Display */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-10">
                     <div className="lg:col-span-5">
-                      <div className="aspect-video rounded-[40px] overflow-hidden border-8 border-white/20 shadow-2xl relative bg-black/20">
-                        <img 
-                          src={currentQuestion.imageUrl} 
-                          alt="Nusantara" 
-                          className={`w-full h-full object-cover transition-all duration-700 ${!isQuestionVisible ? 'blur-3xl scale-150' : 'blur-0 scale-100'}`}
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${currentQuestion.answer}/800/450`;
+                      <div className="aspect-video rounded-[40px] overflow-hidden border-8 border-white/20 shadow-2xl relative bg-indigo-900/40 backdrop-blur-md flex items-center justify-center overflow-hidden">
+                        {/* Animated Cheerful Background Elements */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                          {[...Array(6)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ 
+                                x: Math.random() * 400 - 200, 
+                                y: Math.random() * 200 - 100,
+                                opacity: 0.2,
+                                scale: 0.5 
+                              }}
+                              animate={{ 
+                                y: [null, Math.random() * -100 - 50],
+                                rotate: [0, 360],
+                                opacity: [0.2, 0.4, 0.2],
+                                scale: [0.5, 0.8, 0.5]
+                              }}
+                              transition={{ 
+                                duration: 3 + Math.random() * 4, 
+                                repeat: Infinity, 
+                                ease: "easeInOut" 
+                              }}
+                              className="absolute"
+                            >
+                              {i % 2 === 0 ? <Star className="text-yellow-400" size={40} /> : <Zap className="text-blue-400" size={40} />}
+                            </motion.div>
+                          ))}
+                        </div>
+
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.1, 1],
+                            rotate: [0, 5, -5, 0]
                           }}
-                        />
+                          transition={{ 
+                            duration: 4, 
+                            repeat: Infinity, 
+                            ease: "easeInOut" 
+                          }}
+                          className="relative z-10 flex flex-col items-center gap-4"
+                        >
+                          <div className="p-8 bg-yellow-400 rounded-full shadow-[0_0_50px_rgba(250,204,21,0.4)]">
+                            <Sun size={80} className="text-indigo-900 animate-spin-slow" />
+                          </div>
+                          <div className="flex gap-4">
+                            <Sparkles className="text-yellow-400" size={32} />
+                            <Smile className="text-white" size={32} />
+                            <PartyPopper className="text-pink-400" size={32} />
+                          </div>
+                        </motion.div>
+
                         {appState === 'answer' && (
                           <motion.div 
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="absolute inset-0 bg-green-500/90 flex flex-col items-center justify-center p-8 text-center"
+                            className="absolute inset-0 bg-green-500 flex flex-col items-center justify-center p-8 text-center z-20"
                           >
-                            <CheckCircle2 size={100} className="mb-4" />
-                            <h3 className="text-3xl font-black uppercase mb-2">JAWABAN:</h3>
-                            <p className="text-6xl font-black tracking-tight">{currentQuestion.answer}</p>
+                            <CheckCircle2 size={100} className="mb-4 text-white" />
+                            <h3 className="text-3xl font-black uppercase mb-2 text-white">JAWABAN:</h3>
+                            <p className="text-6xl font-black tracking-tight text-white">{currentQuestion.answer}</p>
                           </motion.div>
                         )}
                       </div>
