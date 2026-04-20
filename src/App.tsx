@@ -99,6 +99,39 @@ export default function App() {
     }
   };
 
+  const handlePracticeStart = () => {
+    soundService.playStart();
+    
+    // Shuffle helper
+    const shuffle = <T,>(array: T[]): T[] => {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    };
+
+    // Collect all questions from all rounds
+    const allQuestions = STATIC_ROUNDS.flatMap(r => r.questions);
+    // Shuffle and pick 2
+    const practiceQuestions = shuffle(allQuestions).slice(0, 2).map((q, idx) => ({
+      ...q,
+      id: 999 + idx,
+      options: shuffle(q.options)
+    }));
+
+    const practiceRound: Round = {
+      id: 0,
+      title: "Mode Latihan",
+      description: "Pemanasan sebelum kompetisi sesungguhnya!",
+      questions: practiceQuestions
+    };
+
+    setRounds([practiceRound]);
+    setAppState('setup');
+  };
+
   // Timer logic
   useEffect(() => {
     let interval: number;
@@ -234,10 +267,23 @@ export default function App() {
             <div className="flex flex-col gap-4">
               <button
                 onClick={handleAIStart}
-                className="flex items-center gap-3 px-12 py-6 bg-yellow-400 hover:bg-yellow-300 text-indigo-900 rounded-full text-3xl font-bold transition-all shadow-2xl hover:scale-105 active:scale-95"
+                className="flex items-center justify-center gap-3 px-12 py-6 bg-yellow-400 hover:bg-yellow-300 text-indigo-900 rounded-full text-3xl font-bold transition-all shadow-2xl hover:scale-105 active:scale-95"
               >
                 MULAI GAME <Sparkles size={28} />
               </button>
+              <button
+                onClick={handlePracticeStart}
+                className="flex items-center justify-center gap-3 px-12 py-4 bg-white/20 hover:bg-white/30 text-white rounded-full text-xl font-bold transition-all backdrop-blur-md border-2 border-white/20 hover:scale-105 active:scale-95"
+              >
+                MODE LATIHAN (2 SOAL)
+              </button>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-20 opacity-60 text-sm font-medium tracking-widest flex items-center gap-2">
+              <Sparkles size={16} className="text-yellow-400" />
+              <span>GAME BUATAN GURU.KECIL</span>
+              <Sparkles size={16} className="text-yellow-400" />
             </div>
           </motion.div>
         )}
